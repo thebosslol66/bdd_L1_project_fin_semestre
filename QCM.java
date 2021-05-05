@@ -9,8 +9,8 @@ public class QCM{
 		text += "1. Saisir une nouvelle question\n";
 		text += "2. Creer un nouveau QCM\n";
 		text += "3. Remplir ou modifier un qcm existant\n";
-		text += "4. Tester un QCM\n";
-		text += "5. Sortir\n";
+		text += "5. Tester un QCM\n";
+		text += "6. Sortir\n";
 		text += ">";
 		return text;
 	}
@@ -316,12 +316,34 @@ public class QCM{
 		}
 	}
 	
+	
+	
+	public static void procedureRechercheQCM(){
+		String motRecherche;
+		ArrayList<Integer> possibleID;
+
+		Ecran.afficherln("Entrez votre texte a rechercher dans les questions(tapez 'exit' pour sortir)");
+		motRecherche = Clavier.saisirString();
+		
+		if (motRecherche != "exit"){
+			int res = BD.executerSelect(statusConnection, "SELECT `quID`, `quTexte` FROM `question` WHERE `quTexte` LIKE '%" + motRecherche + "%'");
+			possibleID = new ArrayList<Integer>();
+			while (BD.suivant(res)) {
+				Ecran.afficherln(BD.attributInt(res, "quID"), ". ", BD.attributString(res, "quTexte"));
+				possibleID.add(BD.attributInt(res, "quID"));
+			}
+			
+			
+		}
+		
+	}
+	
 	public static void main(String [] args){
 		int choix=0;
 		
 		statusConnection = BD.ouvrirConnexion("www.db4free.net", "bdl1ufrst", "bdl1ufrst", "bdl1ufrstpass");
 		
-		while (choix != 5){
+		while (choix != 6){
 			Ecran.afficher(menuPrincipal());
 			choix = Clavier.saisirInt();
 			switch(choix){
@@ -338,6 +360,10 @@ public class QCM{
 				}break;
 					
 				case 4:{
+					procedureRechercheQCM();
+				}break;
+				
+				case 5:{
 					procedureRepondreQCM();
 				}break;
 					
