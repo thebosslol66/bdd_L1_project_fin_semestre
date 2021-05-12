@@ -9,6 +9,7 @@ public class QCM{
 		text += "1. Saisir une nouvelle question\n";
 		text += "2. Creer un nouveau QCM\n";
 		text += "3. Remplir ou modifier un qcm existant\n";
+		text += "4. Rechercher une question par mot cle\n";
 		text += "5. Tester un QCM\n";
 		text += "6. Sortir\n";
 		text += ">";
@@ -63,9 +64,9 @@ public class QCM{
 		}
 		*/
 		Ecran.afficherln("Voici comment se presentras votre question:");
-		Ecran.afficherln(texteQuestion);
+		Ecran.afficherln(texteQuestion.replace("\\'","'"));
 		for (int i=0; i < nbQuestion; i++){
-			Ecran.afficherln(i+1, ". ", reponces[i]);
+			Ecran.afficherln(i+1, ". ", reponces[i].replace("\\'","'"));
 		}
 		int selection = 0;
 		Ecran.afficher("Selectionnez la bonne reponce (avec le nombre a cote de la reponce: ");
@@ -326,12 +327,14 @@ public class QCM{
 		motRecherche = Clavier.saisirString();
 		
 		if (motRecherche != "exit"){
+			Ecran.afficherln("Voici la liste de toutes les questions contenant votre mot cle vous pouvez retenir le numero de la question pour la modifier ou la supprimer dans les autres menus.");
 			int res = BD.executerSelect(statusConnection, "SELECT `quID`, `quTexte` FROM `question` WHERE `quTexte` LIKE '%" + motRecherche + "%'");
 			possibleID = new ArrayList<Integer>();
 			while (BD.suivant(res)) {
 				Ecran.afficherln(BD.attributInt(res, "quID"), ". ", BD.attributString(res, "quTexte"));
 				possibleID.add(BD.attributInt(res, "quID"));
 			}
+			
 			
 			
 		}
