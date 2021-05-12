@@ -10,7 +10,8 @@ public class QCM{
 		text += "2. Creer un nouveau QCM\n";
 		text += "3. Remplir ou modifier un qcm existant\n";
 		text += "4. Tester un QCM\n";
-		text += "5. Sortir\n";
+		text += "5. Supprimer une question\n";
+		text += "6. Sortir\n";
 		text += ">";
 		return text;
 	}
@@ -289,6 +290,60 @@ public class QCM{
 		}
 		//Questions "SELECT * FROM `question` WHERE `quID` IN (SELECT `cqQuestion` FROM `compo_qcm` WHERE `cqQcm` = 1)";
 		//Reponses "SELECT * FROM `reponse` WHERE `reQuestion` IN (SELECT `quID` FROM `question` WHERE `quID` IN (SELECT `cqQuestion` FROM `compo_qcm` WHERE `cqQcm` = )) ORDER BY `reQuestion`,`reOrdre`";
+	
+		}
+	public static void procedureSupprimeQuestion(){
+		int idQuestion;
+		boolean idValide = false;
+		ArrayList<Quest> questionList = new ArrayList<Quest>();
+		String requestQuestionInitial = "SELECT * FROM question ORDER BY quID ASC";
+		int res = BD.executerSelect(statusConnection, requestQuestionInitial);
+		while (BD.suivant(res)) {
+			questionList.add(new Quest(BD.attributInt(res, "quID"), BD.attributString(res, "quTexte"),BD.attributInt(res, "quBonneReponse")));
+		}
+		Ecran.afficherln("Choisissez la question que vous voulez supprimer : ");
+		for (int i = 0; i<questionList.size(); i++) {
+			Ecran.afficherln(questionList.get(i).quID," : ", questionList.get(i).quTexte);
+		}
+		idQuestion = Clavier.saisirInt();
+		int i1 = 0;
+		while (i1<questionList.size() && !idValide) {
+			if (idQuestion == questionList.get(i1).quID) {
+				idValide = true;
+			}
+			i1++;
+		}
+		while (!idValide) {
+			Ecran.afficherln("Cette question n'existe pas !");
+			Ecran.afficherln("Choisissez la question que vous voulez supprimer : ");
+			for (int i = 0; i<questionList.size(); i++) {
+				Ecran.afficherln(questionList.get(i).quID," : ", questionList.get(i).quTexte);
+			}
+			idQuestion = Clavier.saisirInt();
+			int i2 = 0;
+			while (i2<questionList.size() && !idValide) {
+				if (idQuestion == questionList.get(i2).quID) {
+					idValide = true;
+				}
+				i2++;
+			}
+		}
+		BD.fermerResultat(res);
+		String reqestIsQcm= "SELECT DISTINCT cqQcm FROM compo_qcm WHERE cqQuestion = "+idQuestion;
+		res = BD.executerSelect(statusConnection, reqestIsQcm);
+		Ecran.afficherln(res);
+		if(res !=0){
+			Ecran.afficherln("Attention, cette question est présente dans un ou plusieurs QCM,");
+			Ecran.afficherln("La suppression ne peut pas être effectuer !");
+		}else{
+			String reqestSuppression = "DELETE FROM question WHERE quID = "+idQuestion;
+			Ecran.afficherln(reqestSuppression);
+			int result = BD.executerUpdate(statusConnection, reqestSuppression);	
+			Ecran.afficherln(result);
+		}
+
+		
+//SELECT DISTINCT cqQcm FROM compo_qcm WHERE cqQuestion = ?
 	}
 	
 	
@@ -321,7 +376,7 @@ public class QCM{
 		
 		statusConnection = BD.ouvrirConnexion("www.db4free.net", "bdl1ufrst", "bdl1ufrst", "bdl1ufrstpass");
 		
-		while (choix != 5){
+		while (choix != 6){
 			Ecran.afficher(menuPrincipal());
 			choix = Clavier.saisirInt();
 			switch(choix){
@@ -340,6 +395,12 @@ public class QCM{
 				case 4:{
 					procedureRepondreQCM();
 				}break;
+
+				case 5:{
+					procedureSupprimeQuestion();
+				}break;
+					
+				
 					
 			}
 		}
