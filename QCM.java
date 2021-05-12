@@ -372,6 +372,8 @@ public class QCM{
 					
 			}
 		}
+		
+		BD.fermerConnexion(statusConnection);
 	}
 	
 }
