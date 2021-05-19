@@ -395,6 +395,7 @@ public class QCM{
 
 
 
+
 	}
 	public static void procedureModifierReponse(int idQuestion){
 		Ecran.afficherln("Voici les réponse de cette Question\n");
