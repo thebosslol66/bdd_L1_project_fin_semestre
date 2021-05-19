@@ -386,9 +386,12 @@ public class QCM{
 		if (wantReponse == 1) {
 			procedureModifierReponse(idQuestion);
 		}
-		Ecran.afficherln("Maintenant Choisissez la nouvelle bonne réponse si elle a changer");
+		Ecran.afficherln("Maintenant Choisissez la nouvelle bonne réponse si elle a changer (-1 si elle na pas changer");
 		newReponse = Clavier.saisirInt();
-		requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse..replace("'","\\'") +" WHERE quID = "+idQuestion;
+		if (newReponse != -1) {
+			requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse+" WHERE quID = "+idQuestion;
+
+		}
 
 
 
