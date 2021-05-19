@@ -10,9 +10,10 @@ public class QCM{
 		text += "2. Creer un nouveau QCM\n";
 		text += "3. Remplir ou modifier un qcm existant\n";
 		text += "4. Rechercher une question par mot cle\n";
-		text += "5. Tester un QCM\n";
+		text += "5. Modifier une question ou une réponse\n";
 		text += "6. Supprimer une question\n";
-		text += "7. Sortir\n";
+		text += "7. Tester un QCM\n";
+		text += "8. Sortir\n";
 		text += ">";
 		return text;
 	}
@@ -346,6 +347,113 @@ public class QCM{
 		
 //SELECT DISTINCT cqQcm FROM compo_qcm WHERE cqQuestion = ?
 	}
+	public static void procedureModifierQuestion(){
+		int idQuestion;
+		int resultQuestion;
+		int wantReponse = 0;
+		String newQuestion;
+		int newReponse;
+		String requestNewReponse;
+		ArrayList<Quest> questionList = new ArrayList<Quest>();
+		String requestQuestionInitial = "SELECT * FROM question ORDER BY quID ASC";
+		String requestModification = "UPDATE question SET quTexte = ";
+		int res = BD.executerSelect(statusConnection, requestQuestionInitial);
+		while (BD.suivant(res)) {
+			questionList.add(new Quest(BD.attributInt(res, "quID"), BD.attributString(res, "quTexte"),BD.attributInt(res, "quBonneReponse")));
+		}
+		Ecran.afficherln("Choisissez la question que vous voulez modifier : ");
+		for (int i = 0; i<questionList.size(); i++) {
+			Ecran.afficherln(questionList.get(i).quID," : ", questionList.get(i).quTexte);
+		}
+		idQuestion = Clavier.saisirInt();
+		Ecran.afficherln("Modifictation de la question N°",idQuestion,".");
+		Ecran.afficherln("Entrez le nouveau texte de la question : ");
+		newQuestion = Clavier.saisirString();
+		requestModification = requestModification + "\"" + newQuestion + "\"" + " WHERE quID = " + idQuestion;
+		//Ecran.afficherln(requestModification);
+		resultQuestion = BD.executerUpdate(statusConnection, requestModification);
+		Ecran.afficherln("Voulez vous modifier les réponses de cette question ?");
+		Ecran.afficherln("0 : Non");
+		Ecran.afficherln("1 : Oui");
+		wantReponse = Clavier.saisirInt();
+		while(wantReponse !=0 && wantReponse !=1){
+			Ecran.afficherln("Veuillez choisir 0 ou 1 !");
+			Ecran.afficherln("Voulez vous modifier les réponses de cette question ?");
+			Ecran.afficherln("0 : Non");
+			Ecran.afficherln("1 : Oui");
+			wantReponse = Clavier.saisirInt();
+		}
+		if (wantReponse == 1) {
+			procedureModifierReponse(idQuestion);
+		}
+		Ecran.afficherln("Maintenant Choisissez la nouvelle bonne réponse si elle a changer");
+		newReponse = Clavier.saisirInt();
+		requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse+" WHERE quID = "+idQuestion;
+
+
+
+	}
+	public static void procedureModifierReponse(int idQuestion){
+		Ecran.afficherln("Voici les réponse de cette Question\n");
+		int sortir = 0;
+		int nbReponse = 0;
+		while (sortir !=3 ){
+			ArrayList<Rep> reponseList = new ArrayList<Rep>();
+			String requestModificationReponse = "SELECT * FROM reponse WHERE reQuestion = " + idQuestion + " ORDER BY reOrdre";
+			int res2 = BD.executerSelect(statusConnection, requestModificationReponse);
+			while(BD.suivant(res2)){
+				reponseList.add(new Rep(BD.attributInt(res2, "reQuestion"), BD.attributInt(res2, "reOrdre"),BD.attributString(res2, "reTexte")));
+			}
+			nbReponse = reponseList.size();
+			int choix = 0;
+			for (int i = 0; i<reponseList.size(); i++) {
+				Ecran.afficherln(reponseList.get(i).reOrdre," : ", reponseList.get(i).reTexte);
+
+			}
+			Ecran.afficherln("Voulez-vous : ");
+			Ecran.afficherln("1 : Modifier le texte d'une réponse");
+			Ecran.afficherln("2 : Ajouter une réponse");
+			Ecran.afficherln("3 : sortir de la modification des reponses.");
+			choix = Clavier.saisirInt();
+			switch (choix) {
+				case 1:{
+					int reponseId;
+					String text;
+					String request;
+					Ecran.afficherln("Entrez le numero de la reponse a modifier : ");
+					reponseId = Clavier.saisirInt();
+					Ecran.afficherln("Entrez le nouveau texte de la reponse");
+					text = Clavier.saisirString();
+					request = "UPDATE reponse SET reTexte = " + "\"" + text + "\" " + "WHERE reQuestion = " + idQuestion  + " AND reOrdre = " + reponseId;
+					BD.executerUpdate(statusConnection, request);
+				}break;
+				case 2:{
+					nbReponse +=1;
+					String text;
+					int nb;
+					String request;
+					Ecran.afficherln("Entrez le numéro de la nouvelle réponse");
+					nb = Clavier.saisirInt();
+					Ecran.afficherln("Entrez le texte de la nouvelle réponse : ");
+					text = Clavier.saisirString();
+					Ecran.afficherln("Cette réponse sera la réponse N°",nbReponse,".");
+					request = "INSERT INTO reponse (reQuestion, reOrdre, reTexte) VALUES ("+idQuestion+", "+nb+", "+"\'"+text+"\')";
+					BD.executerUpdate(statusConnection, request);
+				}break;
+				case 3:{
+					sortir = 3;
+				}break;
+				default:
+					Ecran.afficherln("Valeur incorecte");
+			}		
+			
+		}
+	}
+
+	
+
+
+
 	
 	
 	public static class Quest{
@@ -401,7 +509,7 @@ public class QCM{
 		
 		statusConnection = BD.ouvrirConnexion("www.db4free.net", "bdl1ufrst", "bdl1ufrst", "bdl1ufrstpass");
 		
-		while (choix != 7){
+		while (choix != 8){
 			Ecran.afficher(menuPrincipal());
 			choix = Clavier.saisirInt();
 			switch(choix){
@@ -422,12 +530,17 @@ public class QCM{
 				}break;
 				
 				case 5:{
-					procedureRepondreQCM();
+					procedureModifierQuestion();
 				}break;
 
 				case 6:{
 					procedureSupprimeQuestion();
 				}break;
+				case 7:{
+					procedureRepondreQCM();
+				}break;
+					
+				
 					
 				
 					
