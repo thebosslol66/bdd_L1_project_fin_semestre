@@ -369,7 +369,7 @@ public class QCM{
 		Ecran.afficherln("Modifictation de la question N°",idQuestion,".");
 		Ecran.afficherln("Entrez le nouveau texte de la question : ");
 		newQuestion = Clavier.saisirString();
-		requestModification = requestModification + "\"" + newQuestion + "\"" + " WHERE quID = " + idQuestion;
+		requestModification = requestModification + "\"" + newQuestion.replace("'","\\'") + "\"" + " WHERE quID = " + idQuestion;
 		//Ecran.afficherln(requestModification);
 		resultQuestion = BD.executerUpdate(statusConnection, requestModification);
 		Ecran.afficherln("Voulez vous modifier les réponses de cette question ?");
@@ -388,7 +388,7 @@ public class QCM{
 		}
 		Ecran.afficherln("Maintenant Choisissez la nouvelle bonne réponse si elle a changer");
 		newReponse = Clavier.saisirInt();
-		requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse+" WHERE quID = "+idQuestion;
+		requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse..replace("'","\\'") +" WHERE quID = "+idQuestion;
 
 
 
@@ -437,7 +437,7 @@ public class QCM{
 					Ecran.afficherln("Entrez le texte de la nouvelle réponse : ");
 					text = Clavier.saisirString();
 					Ecran.afficherln("Cette réponse sera la réponse N°",nbReponse,".");
-					request = "INSERT INTO reponse (reQuestion, reOrdre, reTexte) VALUES ("+idQuestion+", "+nb+", "+"\'"+text+"\')";
+					request = "INSERT INTO reponse (reQuestion, reOrdre, reTexte) VALUES ("+idQuestion+", "+nb+", "+"\'"+text.replace("'","\\'")+"\')";
 					BD.executerUpdate(statusConnection, request);
 				}break;
 				case 3:{
