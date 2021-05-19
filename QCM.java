@@ -388,7 +388,7 @@ public class QCM{
 		}
 		Ecran.afficherln("Maintenant Choisissez la nouvelle bonne réponse si elle a changer");
 		newReponse = Clavier.saisirInt();
-		requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse..replace("'","\\'") +" WHERE quID = "+idQuestion;
+		requestNewReponse = "UPDATE question SET quBonneReponse = "+newReponse +" WHERE quID = "+idQuestion;
 
 
 
