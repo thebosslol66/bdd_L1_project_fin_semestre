@@ -7,9 +7,9 @@ public class QCM{
 	public static String menuPrincipal(){
 		String text = "Choisissez ce que vous voulez faire:\n";
 		text += "1. Saisir une nouvelle question\n";
-		text += "2. Creer un nouveau QCM\n";
-		text += "3. Remplir ou modifier un qcm éxistant\n";
-		text += "4. Rechercher une question par mot cle\n";
+		text += "2. Créer un nouveau QCM\n";
+		text += "3. Remplir ou modifier un qcm existant\n";
+		text += "4. Rechercher une question par mot clé\n";
 		text += "5. Modifier une question ou une réponse\n";
 		text += "6. Supprimer une question\n";
 		text += "7. Tester un QCM\n";
@@ -26,38 +26,38 @@ public class QCM{
 		texteQuestion = Clavier.saisirString();
 		texteQuestion = texteQuestion.replace("'","\\'");
 		while(texteQuestion.length() >200){
-			Ecran.afficherln("Désole mais votre question est trop longue:");
+			Ecran.afficherln("Désolé mais votre question est trop longue:");
 			texteQuestion = Clavier.saisirString();
 			 texteQuestion = texteQuestion.replace("'","\\'");
 		}
-		Ecran.afficher("Saisissez le nombre de réponses possibles pour cette question (attention ce nombre ne pourrat pas etre changé et au maximum valoir 6):");
+		Ecran.afficher("Saisissez le nombre de réponses possibles pour cette question (attention ce nombre ne pourra pas être changé et au maximum valoir 6):");
 		nbQuestion = Clavier.saisirInt();
 		while (nbQuestion <= 0 || nbQuestion > 6) {
-			Ecran.afficher("Recommencez, le nombre de réponse doit etre entre 1 et 6: ");
+			Ecran.afficher("Recommencez, le nombre de réponse doit être entre 1 et 6: ");
 			nbQuestion = Clavier.saisirInt();
 		}
 		String[] reponses = new String[nbQuestion];
 		for (int i=0; i < nbQuestion; i++){
-			Ecran.afficherln("Ecrivez la réponse numero ", i+1,"(je rapelle que la réponse doit faire moins de 200 caratères)");
+			Ecran.afficherln("Ecrivez la réponse numero ", i+1,"(je rappele que la réponse doit faire moins de 200 caratères)");
 			reponses[i] = Clavier.saisirString();
 			reponses[i] = reponses[i].replace("'","\\'");
 			while (reponses[i].length() > 200){
-				Ecran.afficherln("Désole mais votre réponse est trop longue:");
+				Ecran.afficherln("Désolé mais votre réponse est trop longue:");
 				reponses[i] = Clavier.saisirString();
 				reponses[i] = reponses[i].replace("'","\\' ");
 			}
 		}
 
-		Ecran.afficherln("Voici comment se présentra votre question:");
+		Ecran.afficherln("Voici comment se présentera votre question:");
 		Ecran.afficherln(texteQuestion.replace("\\'","'"));
 		for (int i=0; i < nbQuestion; i++){
 			Ecran.afficherln(i+1, ". ", reponses[i].replace("\\'","'"));
 		}
 		int selection = 0;
-		Ecran.afficher("Sélectionnez la bonne réponse (avec le nombre a coté de la réponse: ");
+		Ecran.afficher("Sélectionnez la bonne réponse (avec le nombre à côté de la réponse: ");
 		selection = Clavier.saisirInt();
 		while (selection <1 || selection > nbQuestion){
-			Ecran.afficher("Le nombre doit se trouver a côté d une de vos réponse ");
+			Ecran.afficher("Le nombre doit se trouver à côté d'une de vos réponse ");
 			selection = Clavier.saisirInt();
 		}
 			
@@ -74,7 +74,7 @@ public class QCM{
 				Ecran.afficherln("Erreur lors de l'écriture des réponses");
 			}
 			else{
-				Ecran.afficherln("La question a été enregistré");
+				Ecran.afficherln("La question a été enregistrée");
 			}
 		}
 		else{
@@ -85,7 +85,7 @@ public class QCM{
 	public static void procedureNouveauQCM(){
 		int res = BD.executerSelect(statusConnection, "SELECT `qcmTitre` FROM `qcm`");
 		ArrayList<String> titrePris = new ArrayList<String>();
-		Ecran.afficherln("Voici tous les QCM deja enregistrés: ");
+		Ecran.afficherln("Voici tous les QCM déjà enregistrés: ");
 		while (BD.suivant(res)) {
 			Ecran.afficherln(BD.attributString(res, "qcmTitre"));
 			titrePris.add(BD.attributString(res, "qcmTitre"));
@@ -93,7 +93,7 @@ public class QCM{
 		if (titrePris.size() == 0) {
 			Ecran.afficherln("Il n'y a aucun QCM actuellement");
 		}
-		Ecran.afficherln("Ecrivez le titre du nouveau QCM pour ajouter le QCM ou laissez le champ blanc pour revenir a la page principale");
+		Ecran.afficherln("Ecrivez le titre du nouveau QCM pour ajouter le QCM ou laissez le champ blanc pour revenir à la page principale");
 		String nouveauTitre = Clavier.saisirString();
 		nouveauTitre.replace("'","\\'");
 		while((titrePris.contains(nouveauTitre) && nouveauTitre.length() > 0) || nouveauTitre.length() > 200){
@@ -109,12 +109,12 @@ public class QCM{
 		
 		if (nouveauTitre.length() > 0){
 			BD.executerUpdate(statusConnection, "INSERT INTO `qcm` (`qcmTitre`) VALUES ('" + nouveauTitre + "')");
-			Ecran.afficherln("Votre QCM a été enregistre avec succès. Pour ajouter des question à ce qcm rendez vous dans l'option Remplir ou modifier un qcm éxistant");			
+			Ecran.afficherln("Votre QCM a été enregistré avec succès. Pour ajouter des question à ce qcm rendez vous dans l'option Remplir ou modifier un qcm existant");			
 		}
 	}
 	
 	public static void procedureRemplissageModificationQCM(){
-		Ecran.afficherln("Choisissez le QCM a modifier");
+		Ecran.afficherln("Choisissez le QCM à modifier");
 		int res = BD.executerSelect(statusConnection, "SELECT * FROM `qcm`");
 		ArrayList<Integer> possibleID = new ArrayList<Integer>();
 		while (BD.suivant(res)) {
@@ -125,7 +125,7 @@ public class QCM{
 		Ecran.afficherln("Pour sélectionner une question entrez l'id de la question (pour quitter écrivez -1):");
 		int selectionQuestion = Clavier.saisirInt();
 		while(!possibleID.contains(selectionQuestion) && selectionQuestion >= 0){
-			Ecran.afficherln("Saisissez un nombre éxistant");
+			Ecran.afficherln("Saisissez un nombre existant");
 			selectionQuestion = Clavier.saisirInt();
 		
 		}
@@ -150,7 +150,7 @@ public class QCM{
 				Ecran.afficherln("2. Supprimer une question au QCM");
 				Ecran.afficherln("3. Quitter les modifications");
 				
-				Ecran.afficher("Entrez votre choix (le numero): ");
+				Ecran.afficher("Entrez votre choix (le numéro): ");
 				selection = Clavier.saisirInt();
 				while(selection < 1 || selection > 3){
 					Ecran.afficherln("Saisissez un nombre possible");
@@ -167,7 +167,7 @@ public class QCM{
 						possibleID.add(BD.attributInt(res, "quID"));
 					}
 					
-					Ecran.afficher("Sélectionnez le numero de la question à ajouter au QCM (écrivez -1 pour revenir a l'ecan précédent): ");
+					Ecran.afficher("Sélectionnez le numéro de la question à ajouter au QCM (écrivez -1 pour revenir à l'ecan précédent): ");
 					int choix = Clavier.saisirInt();
 					while(!possibleID.contains(choix) && choix >= 0){
 						Ecran.afficherln("Saisissez un nombre possible");
@@ -185,7 +185,7 @@ public class QCM{
 						Ecran.afficherln(BD.attributInt(res, "quID"), ". ", BD.attributString(res, "quTexte"));
 						possibleID.add(BD.attributInt(res, "quID"));
 					}
-					Ecran.afficher("Sélectionnez le numero de la question a supprimer (écrivez -1 pour revenir a l'ecan précédent): ");
+					Ecran.afficher("Sélectionnez le numéro de la question a supprimer (écrivez -1 pour revenir à l'ecran précédent): ");
 					int choix = Clavier.saisirInt();
 					while(!possibleID.contains(choix) && choix >= 0){
 						Ecran.afficherln("Saisissez un nombre possible");
@@ -210,10 +210,10 @@ public class QCM{
 			possibleID.add(BD.attributInt(res, "qcmID"));
 		}
 		
-		Ecran.afficherln("Pour selectionner un QCM entrez l'id du QCM (pour quitter écrivez -1):");
+		Ecran.afficherln("Pour sélectionner un QCM entrez l'id du QCM (pour quitter écrivez -1):");
 		int selectionQCM = Clavier.saisirInt();
 		while(!possibleID.contains(selectionQCM) && selectionQCM >= 0){
-			Ecran.afficherln("Saisissez un nombre éxistant");
+			Ecran.afficherln("Saisissez un nombre existant");
 			selectionQCM = Clavier.saisirInt();
 		}
 		if (selectionQCM >= 0){
@@ -266,7 +266,7 @@ public class QCM{
 				questionList.remove(questionActuelle);
 			}
 			if (numQuest == 0){
-				Ecran.afficherln("Désole mais il n'y a pas de question dans ce qcm");
+				Ecran.afficherln("Désolé mais il n'y a pas de question dans ce qcm");
 			}
 			else {
 				Ecran.afficherln("Votre score est de ", score,"/", numQuest, " soit ", (score*20/(float)numQuest), "/20");
@@ -316,7 +316,7 @@ public class QCM{
 		Ecran.afficherln(res);
 		if(res !=0){
 			Ecran.afficherln("Attention, cette question est présente dans un ou plusieurs QCM,");
-			Ecran.afficherln("La suppression ne peut pas être éffectué !");
+			Ecran.afficherln("La suppression ne peut pas être effectuée !");
 		}else{
 			String reqestSuppression = "DELETE FROM question WHERE quID = "+idQuestion;
 			Ecran.afficherln(reqestSuppression);
@@ -344,26 +344,26 @@ public class QCM{
 			Ecran.afficherln(questionList.get(i).quID," : ", questionList.get(i).quTexte);
 		}
 		idQuestion = Clavier.saisirInt();
-		Ecran.afficherln("Modifictation de la question N°",idQuestion,".");
+		Ecran.afficherln("Modification de la question N°",idQuestion,".");
 		Ecran.afficherln("Entrez le nouveau texte de la question : ");
 		newQuestion = Clavier.saisirString();
 		requestModification = requestModification + "\"" + newQuestion.replace("'","\\'") + "\"" + " WHERE quID = " + idQuestion;
 		resultQuestion = BD.executerUpdate(statusConnection, requestModification);
 		Ecran.afficherln("Voulez vous modifier les réponses de cette question ?");
-		Ecran.afficherln("0 : Non");
-		Ecran.afficherln("1 : Oui");
+		Ecran.afficherln("0 : Oui");
+		Ecran.afficherln("1 : Non");
 		wantreponse = Clavier.saisirInt();
 		while(wantreponse !=0 && wantreponse !=1){
 			Ecran.afficherln("Veuillez choisir 0 ou 1 !");
 			Ecran.afficherln("Voulez vous modifier les réponses de cette question ?");
-			Ecran.afficherln("0 : Non");
-			Ecran.afficherln("1 : Oui");
+			Ecran.afficherln("0 : Oui");
+			Ecran.afficherln("1 : Non");
 			wantreponse = Clavier.saisirInt();
 		}
 		if (wantreponse == 1) {
 			procedureModifierreponse(idQuestion);
 		}
-		Ecran.afficherln("Maintenant choisissez la nouvelle bonne réponse si elle a changé (-1 si elle na pas changé");
+		Ecran.afficherln("Maintenant choisissez la nouvelle bonne réponse si elle a changé (-1 si elle n'a pas changé");
 		newreponse = Clavier.saisirInt();
 		if (newreponse != -1) {
 			requestnewreponse = "UPDATE question SET quBonnereponse = "+newreponse+" WHERE quID = "+idQuestion;
@@ -401,7 +401,7 @@ public class QCM{
 					int reponseId;
 					String text;
 					String request;
-					Ecran.afficherln("Entrez le numero de la réponse a modifier : ");
+					Ecran.afficherln("Entrez le numéro de la réponse à modifier : ");
 					reponseId = Clavier.saisirInt();
 					Ecran.afficherln("Entrez le nouveau texte de la réponse");
 					text = Clavier.saisirString();
@@ -413,7 +413,7 @@ public class QCM{
 					String text;
 					int nb;
 					String request;
-					Ecran.afficherln("Entrez le numero de la nouvelle réponse");
+					Ecran.afficherln("Entrez le numéro de la nouvelle réponse");
 					nb = Clavier.saisirInt();
 					Ecran.afficherln("Entrez le texte de la nouvelle réponse : ");
 					text = Clavier.saisirString();
@@ -467,11 +467,11 @@ public class QCM{
 		String motRecherche;
 		ArrayList<Integer> possibleID;
 
-		Ecran.afficherln("Entrez votre texte a rechercher dans les questions(ecrivez 'exit' pour sortir)");
+		Ecran.afficherln("Entrez votre texte à rechercher dans les questions(écrivez 'exit' pour sortir)");
 		motRecherche = Clavier.saisirString();
 		
 		if (motRecherche != "exit"){
-			Ecran.afficherln("Voici la liste de toutes les questions contenant votre mot cle, vous pouvez retenir le numero de la question pour la modifier ou la supprimer dans les autres menus.");
+			Ecran.afficherln("Voici la liste de toutes les questions contenant votre mot clé, vous pouvez retenir le numéro de la question pour la modifier ou la supprimer dans les autres menus.");
 			int res = BD.executerSelect(statusConnection, "SELECT `quID`, `quTexte` FROM `question` WHERE `quTexte` LIKE '%" + motRecherche + "%'");
 			possibleID = new ArrayList<Integer>();
 			while (BD.suivant(res)) {
